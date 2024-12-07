@@ -2,7 +2,6 @@ package d
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"math/big"
 	"strings"
@@ -20,30 +19,64 @@ func (d *D) Input(input io.Reader) {
 	d.inputStream = bufio.NewReader(input)
 }
 
-func calc(numbers []big.Int, expectedResult big.Int) bool {
-	if len(numbers) == 0 {
+func calc2(currentCalc big.Int, remainingNumbers []big.Int, expectedResult big.Int) bool {
+	if len(remainingNumbers) == 0 {
 		return false
 	}
 
-	if len(numbers) == 1 {
-		return numbers[0].Cmp(&expectedResult) == 0
-	}
+	for i := 0; i < len(remainingNumbers); i++ {
+		newCalcAddition := new(big.Int)
+		newCalcAddition.Add(&currentCalc, &remainingNumbers[i])
 
-	for i := 0; i < len(numbers); i++ {
-		if numbers[i].Cmp(&expectedResult) == 0 {
+		newCalcMultiplication := new(big.Int)
+		newCalcMultiplication.Mul(&currentCalc, &remainingNumbers[i])
+
+		newCalcStringConcatenation := new(big.Int)
+		currentCalcString := currentCalc.String()
+		remainingNumbersString := remainingNumbers[i].String()
+		newCalcStringConcatenation.SetString(currentCalcString+remainingNumbersString, 10)
+
+		if (newCalcAddition.Cmp(&expectedResult) == 0 ||
+			newCalcMultiplication.Cmp(&expectedResult) == 0 ||
+			newCalcStringConcatenation.Cmp(&expectedResult) == 0) &&
+			len(remainingNumbers[i+1:]) == 0 {
 			return true
 		}
 
-		targetAddition := new(big.Int)
-		targetAddition.Sub(&expectedResult, &numbers[i])
+		if calc2(*newCalcAddition, remainingNumbers[i+1:], expectedResult) {
+			return true
+		}
+		if calc2(*newCalcMultiplication, remainingNumbers[i+1:], expectedResult) {
+			return true
+		}
+		if calc2(*newCalcStringConcatenation, remainingNumbers[i+1:], expectedResult) {
+			return true
+		}
+	}
 
-		targetMultiplication := new(big.Int)
-		targetMultiplication.Div(&expectedResult, &numbers[i])
-		// targetMultiplication := expectedResult / numbers[i]
-		// fmt.Println("targetMultiplication", numbers[i], numbers[i+1:], targetMultiplication)
-		// fmt.Println("targetAddition", numbers[i], numbers[i+1:], targetAddition)
+	return false
+}
 
-		if calc(numbers[i+1:], *targetMultiplication) || calc(numbers[i+1:], *targetAddition) {
+func calc(currentCalc big.Int, remainingNumbers []big.Int, expectedResult big.Int) bool {
+	if len(remainingNumbers) == 0 {
+		return false
+	}
+
+	for i := 0; i < len(remainingNumbers); i++ {
+		newCalcAddition := new(big.Int)
+		newCalcAddition.Add(&currentCalc, &remainingNumbers[i])
+
+		newCalcMultiplication := new(big.Int)
+		newCalcMultiplication.Mul(&currentCalc, &remainingNumbers[i])
+
+		if newCalcAddition.Cmp(&expectedResult) == 0 || newCalcMultiplication.Cmp(&expectedResult) == 0 && len(remainingNumbers[i+1:]) == 0 {
+			return true
+		}
+
+		if calc(*newCalcAddition, remainingNumbers[i+1:], expectedResult) {
+			return true
+		}
+		if calc(*newCalcMultiplication, remainingNumbers[i+1:], expectedResult) {
 			return true
 		}
 	}
@@ -73,14 +106,12 @@ func (d *D) Run1BigInt() big.Int {
 	fileScanner := bufio.NewScanner(d.inputStream)
 	fileScanner.Split(bufio.ScanLines)
 
-	fmt.Println("running d7 Run1Int64")
-
 	result := new(big.Int)
 
 	for fileScanner.Scan() {
 		line := fileScanner.Text()
 		elems := strings.Split(line, ": ")
-		expectedResult := new(big.Int)
+		expectedResult := big.Int{}
 		expectedResult.SetString(elems[0], 10)
 
 		numbersAsString := strings.Split(elems[1], " ")
@@ -91,19 +122,42 @@ func (d *D) Run1BigInt() big.Int {
 			numbers = append(numbers, number)
 		}
 
-		canBeCalculated := calc(numbers, *expectedResult)
+		canBeCalculated := calc(numbers[0], numbers[1:], expectedResult)
 
 		if canBeCalculated {
-			result.Add(result, expectedResult)
-		} else {
-			fmt.Println("not possible", numbers, expectedResult)
+			result.Add(result, &expectedResult)
 		}
-
 	}
 
 	return *result
 }
 
 func (d *D) Run2BigInt() big.Int {
-	return big.Int{}
+	fileScanner := bufio.NewScanner(d.inputStream)
+	fileScanner.Split(bufio.ScanLines)
+
+	result := new(big.Int)
+
+	for fileScanner.Scan() {
+		line := fileScanner.Text()
+		elems := strings.Split(line, ": ")
+		expectedResult := big.Int{}
+		expectedResult.SetString(elems[0], 10)
+
+		numbersAsString := strings.Split(elems[1], " ")
+		numbers := []big.Int{}
+		for i := 0; i < len(numbersAsString); i++ {
+			number := big.Int{}
+			number.SetString(numbersAsString[i], 10)
+			numbers = append(numbers, number)
+		}
+
+		canBeCalculated := calc2(numbers[0], numbers[1:], expectedResult)
+
+		if canBeCalculated {
+			result.Add(result, &expectedResult)
+		}
+	}
+
+	return *result
 }
