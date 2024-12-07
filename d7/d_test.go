@@ -2,7 +2,6 @@ package d
 
 import (
 	"bytes"
-	"math/big"
 	"testing"
 )
 
@@ -11,9 +10,9 @@ func TestDbabystep(t *testing.T) {
 
 	d := NewD()
 	d.Input(bytes.NewBufferString(input))
-	got := d.Run1BigInt()
-	want := new(big.Int).SetInt64(190)
-	if got.Cmp(want) != 0 {
+	got := d.Run1()
+	want := 190
+	if got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
@@ -23,21 +22,21 @@ func TestDbabystep2(t *testing.T) {
 
 	d := NewD()
 	d.Input(bytes.NewBufferString(input))
-	got := d.Run1BigInt()
-	want := new(big.Int).SetInt64(190)
-	if got.Cmp(want) != 0 {
+	got := d.Run1()
+	want := 190
+	if got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
 
 func TestDbabystep3(t *testing.T) {
-	input := `190: 150 10 25 15`
+	input := `200: 150 10 25 15`
 
 	d := NewD()
 	d.Input(bytes.NewBufferString(input))
-	got := d.Run1BigInt()
-	want := new(big.Int).SetInt64(190)
-	if got.Cmp(want) != 0 {
+	got := d.Run1()
+	want := 200
+	if got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
@@ -47,9 +46,9 @@ func TestDbabystep4(t *testing.T) {
 
 	d := NewD()
 	d.Input(bytes.NewBufferString(input))
-	got := d.Run1BigInt()
-	want := new(big.Int).SetInt64(190)
-	if got.Cmp(want) != 0 {
+	got := d.Run1()
+	want := 190
+	if got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
@@ -59,9 +58,9 @@ func TestDbabystep5(t *testing.T) {
 
 	d := NewD()
 	d.Input(bytes.NewBufferString(input))
-	got := d.Run1BigInt()
-	want := new(big.Int).SetInt64(265)
-	if got.Cmp(want) != 0 {
+	got := d.Run1()
+	want := 265
+	if got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
@@ -71,9 +70,9 @@ func TestDbabystep6(t *testing.T) {
 
 	d := NewD()
 	d.Input(bytes.NewBufferString(input))
-	got := d.Run1BigInt()
-	want := new(big.Int).SetInt64(23000000000001)
-	if got.Cmp(want) != 0 {
+	got := d.Run1()
+	want := 23000000000001
+	if got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
@@ -83,9 +82,9 @@ func TestDbabystep7(t *testing.T) {
 
 	d := NewD()
 	d.Input(bytes.NewBufferString(input))
-	got := d.Run1BigInt()
-	want := new(big.Int).SetInt64(10000000000000)
-	if got.Cmp(want) != 0 {
+	got := d.Run1()
+	want := 10000000000000
+	if got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
@@ -95,9 +94,9 @@ func TestDbabystep8(t *testing.T) {
 
 	d := NewD()
 	d.Input(bytes.NewBufferString(input))
-	got := d.Run1BigInt()
-	want := new(big.Int).SetInt64(390625)
-	if got.Cmp(want) != 0 {
+	got := d.Run1()
+	want := 390625
+	if got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
@@ -107,9 +106,9 @@ func TestDbabystep9(t *testing.T) {
 
 	d := NewD()
 	d.Input(bytes.NewBufferString(input))
-	got := d.Run1BigInt()
-	want := new(big.Int).SetInt64(3240)
-	if got.Cmp(want) != 0 {
+	got := d.Run1()
+	want := 3240
+	if got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
@@ -119,9 +118,9 @@ func TestDbabystep10(t *testing.T) {
 
 	d := NewD()
 	d.Input(bytes.NewBufferString(input))
-	got := d.Run1BigInt()
-	want := new(big.Int).SetInt64(0)
-	if got.Cmp(want) != 0 {
+	got := d.Run1()
+	want := 0
+	if got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
@@ -139,10 +138,10 @@ func TestD(t *testing.T) {
 
 	d := NewD()
 	d.Input(bytes.NewBufferString(input))
-	got := d.Run1BigInt()
+	got := d.Run1()
 
-	want := new(big.Int).SetInt64(3749)
-	if got.Cmp(want) != 0 {
+	want := 3749
+	if got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
