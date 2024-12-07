@@ -49,7 +49,7 @@ func main() {
 
 		day.Input(bytes.NewBuffer(input))
 		result2 := day.Run2()
-		if result == 0 {
+		if result2 == 0 {
 			strResult := day.RunStr2()
 			if strResult == "" {
 				bigIntResult := day.Run2BigInt()

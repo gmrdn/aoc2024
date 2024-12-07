@@ -148,14 +148,14 @@ func TestD(t *testing.T) {
 }
 
 func TestD2debug(t *testing.T) {
-	input := `7290: 6 8 6 15`
+	input := `1000000000000011111: 10000000000000 1 1 1 1 1`
 
 	d := NewD()
 	d.Input(bytes.NewBufferString(input))
-	got := d.Run2BigInt()
+	got := d.Run2()
 
-	want := new(big.Int).SetInt64(7290)
-	if got.Cmp(want) != 0 {
+	want := 1000000000000011111
+	if got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
@@ -173,10 +173,10 @@ func TestD2(t *testing.T) {
 
 	d := NewD()
 	d.Input(bytes.NewBufferString(input))
-	got := d.Run2BigInt()
+	got := d.Run2()
 
-	want := new(big.Int).SetInt64(11387)
-	if got.Cmp(want) != 0 {
+	want := 11387
+	if got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
