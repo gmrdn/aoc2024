@@ -2,8 +2,8 @@ package d
 
 import (
 	"bufio"
-	"fmt"
 	"io"
+	"math/big"
 	"strings"
 )
 
@@ -27,6 +27,7 @@ type state struct {
 	pos                      point
 	direction                int // 8 = up, 6 = right, 2 = down, 4 = left
 	visited                  []point
+	newObstaclePosition      point
 	obstaclesMetByDirections map[int][]point
 }
 
@@ -52,19 +53,15 @@ func (s *state) getNextPosition() (point, bool) {
 
 	obstacle := false
 	if nextPosition.x < 0 || nextPosition.x >= len(s.grid) || nextPosition.y < 0 || nextPosition.y >= len(s.grid[0]) {
-		// fmt.Println("out of bounds")
-		// fmt.Println(nextPosition)
 		return nextPosition, false
 	}
 
 	if s.grid[nextPosition.x][nextPosition.y] == "#" {
-		// fmt.Println("obstacle")
 		obstacle = true
 		obstaclePosition := point{nextPosition.x, nextPosition.y}
 
 		for _, alreadyMet := range s.obstaclesMetByDirections[s.direction] {
 			if alreadyMet == obstaclePosition {
-				fmt.Println("infinite loop caused by obstacle", obstaclePosition)
 				return nextPosition, true
 			}
 		}
@@ -76,6 +73,28 @@ func (s *state) getNextPosition() (point, bool) {
 	}
 
 	if obstacle {
+		nextPosition = s.pos
+		switch s.direction {
+		case 8:
+			nextPosition.x -= 1
+		case 6:
+			nextPosition.y += 1
+		case 2:
+			nextPosition.x += 1
+		case 4:
+			nextPosition.y -= 1
+		}
+	}
+
+	if nextPosition.x < 0 || nextPosition.x >= len(s.grid) || nextPosition.y < 0 || nextPosition.y >= len(s.grid[0]) {
+		return nextPosition, false
+	}
+
+	if s.grid[nextPosition.x][nextPosition.y] == "#" {
+
+		newDirection := nextDirection[s.direction]
+		s.direction = newDirection
+
 		nextPosition = s.pos
 		switch s.direction {
 		case 8:
@@ -105,7 +124,6 @@ func (d *D) Run1() int {
 	startingPosition := point{0, 0}
 
 	for i, row := range grid {
-		// fmt.Println(row)
 		for j, cell := range row {
 			if cell == "^" {
 				startingPosition = point{i, j}
@@ -126,7 +144,6 @@ func (d *D) Run1() int {
 
 		state.visited = append(state.visited, state.pos)
 		state.pos = nextPosition
-		// fmt.Println(state.visited)
 
 		if nextPosition.x < 0 || nextPosition.x >= len(grid) || nextPosition.y < 0 || nextPosition.y >= len(grid[0]) {
 			break
@@ -136,10 +153,6 @@ func (d *D) Run1() int {
 	for _, visit := range state.visited {
 		grid[visit.x][visit.y] = "X"
 	}
-
-	// for _, row := range grid {
-	// fmt.Println(row)
-	// }
 
 	uniqueVisited := map[point]bool{}
 	for _, visit := range state.visited {
@@ -164,7 +177,6 @@ func (d *D) Run2() int {
 	startingPosition := point{0, 0}
 
 	for i, row := range grid {
-		// fmt.Println(row)
 		for j, cell := range row {
 			if cell == "^" {
 				startingPosition = point{i, j}
@@ -204,16 +216,15 @@ func (d *D) Run2() int {
 				for {
 					nextPosition, infiniteLoop := state.getNextPosition()
 
-					if infiniteLoop {
-						nbInfiniteLoops++
+					state.visited = append(state.visited, state.pos)
+					state.pos = nextPosition
+
+					if nextPosition.x < 0 || nextPosition.x >= len(grid) || nextPosition.y < 0 || nextPosition.y >= len(grid[0]) {
 						break
 					}
 
-					state.visited = append(state.visited, state.pos)
-					state.pos = nextPosition
-					// fmt.Println(state.visited)
-
-					if nextPosition.x < 0 || nextPosition.x >= len(grid) || nextPosition.y < 0 || nextPosition.y >= len(grid[0]) {
+					if infiniteLoop {
+						nbInfiniteLoops++
 						break
 					}
 				}
@@ -232,4 +243,12 @@ func (d *D) RunStr1() string {
 
 func (d *D) RunStr2() string {
 	return ""
+}
+
+func (d *D) Run1BigInt() big.Int {
+	return big.Int{}
+}
+
+func (d *D) Run2BigInt() big.Int {
+	return big.Int{}
 }

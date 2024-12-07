@@ -3,6 +3,7 @@ package d
 import (
 	"bufio"
 	"io"
+	"math/big"
 	"regexp"
 	"strconv"
 	"strings"
@@ -81,4 +82,12 @@ func (d *D) RunStr1() string {
 
 func (d *D) RunStr2() string {
 	return ""
+}
+
+func (d *D) Run1BigInt() big.Int {
+	return big.Int{}
+}
+
+func (d *D) Run2BigInt() big.Int {
+	return big.Int{}
 }

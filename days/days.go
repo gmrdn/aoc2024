@@ -2,6 +2,7 @@ package days
 
 import (
 	"io"
+	"math/big"
 )
 
 type Day interface {
@@ -10,4 +11,6 @@ type Day interface {
 	Run2() int
 	RunStr1() string
 	RunStr2() string
+	Run1BigInt() big.Int
+	Run2BigInt() big.Int
 }

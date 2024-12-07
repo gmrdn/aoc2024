@@ -13,6 +13,7 @@ import (
 	d4 "aoc2024/d4"
 	d5 "aoc2024/d5"
 	d6 "aoc2024/d6"
+	d7 "aoc2024/d7"
 )
 
 func main() {
@@ -23,6 +24,7 @@ func main() {
 		d4.NewD(),
 		d5.NewD(),
 		d6.NewD(),
+		d7.NewD(),
 	}
 
 	for index, day := range days {
@@ -34,7 +36,13 @@ func main() {
 
 		result := day.Run1()
 		if result == 0 {
-			fmt.Printf("Day %d - 1: %s\n", index+1, day.RunStr2())
+			strResult := day.RunStr1()
+			if strResult == "" {
+				bigIntResult := day.Run1BigInt()
+				fmt.Printf("Day %d - 1: %s\n", index+1, bigIntResult.String())
+			} else {
+				fmt.Printf("Day %d - 1: %s\n", index+1, strResult)
+			}
 		} else {
 			fmt.Printf("Day %d - 1: %d\n", index+1, result)
 		}
@@ -42,9 +50,16 @@ func main() {
 		day.Input(bytes.NewBuffer(input))
 		result2 := day.Run2()
 		if result == 0 {
-			fmt.Printf("Day %d - 2: %s\n", index+1, day.RunStr2())
+			strResult := day.RunStr2()
+			if strResult == "" {
+				bigIntResult := day.Run2BigInt()
+				fmt.Printf("Day %d - 2: %s\n", index+1, bigIntResult.String())
+			} else {
+				fmt.Printf("Day %d - 2: %s\n", index+1, strResult)
+			}
 		} else {
 			fmt.Printf("Day %d - 2: %d\n", index+1, result2)
 		}
+
 	}
 }
