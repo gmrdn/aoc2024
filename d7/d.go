@@ -25,6 +25,10 @@ func calc2(currentCalc int, remainingNumbers []int, expectedResult int) bool {
 		return expectedResult == currentCalc
 	}
 
+	if currentCalc > expectedResult {
+		return false
+	}
+
 	nextNumber := remainingNumbers[0]
 	newCalcAddition := currentCalc + nextNumber
 	newCalcMultiplication := currentCalc * nextNumber
@@ -49,6 +53,10 @@ func calc2(currentCalc int, remainingNumbers []int, expectedResult int) bool {
 func calc(currentCalc int, remainingNumbers []int, expectedResult int) bool {
 	if len(remainingNumbers) == 0 {
 		return expectedResult == currentCalc
+	}
+
+	if currentCalc > expectedResult {
+		return false
 	}
 
 	nextNumber := remainingNumbers[0]
