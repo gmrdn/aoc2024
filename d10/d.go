@@ -36,7 +36,13 @@ func getMatrix(fileScanner *bufio.Scanner) [][]int {
 		numbersAsStrings := strings.Split(line, "")
 		numbers := make([]int, 0)
 		for _, numberAsString := range numbersAsStrings {
-			number, _ := strconv.Atoi(numberAsString)
+			number := 0
+			if numberAsString == "." {
+				number = -1
+			} else {
+				number, _ = strconv.Atoi(numberAsString)
+			}
+
 			numbers = append(numbers, number)
 		}
 		matrix = append(matrix, numbers)
@@ -50,14 +56,11 @@ func (d *D) Run1() int {
 
 	matrix := getMatrix(fileScanner)
 
-	// fmt.Println(matrix)
-
 	result := 0
 
 	for i, row := range matrix {
 		for j, col := range row {
 			if col == 0 {
-				// fmt.Println("Found 0 at", i, j)
 				// begin of 0 cell
 
 				nbFullPath := 0
@@ -75,10 +78,8 @@ func (d *D) Run1() int {
 					queue = queue[1:]
 
 					currentAltitude := matrix[currentNode.point.x][currentNode.point.y]
-					// fmt.Println("Current node", currentNode, "Altitude", currentAltitude)
 
 					if currentNode.distance == 9 {
-						// fmt.Println("9")
 						nbFullPath++
 						// break
 					}
@@ -92,7 +93,6 @@ func (d *D) Run1() int {
 
 				}
 
-				// fmt.Println("Nb full path", nbFullPath, "for 0 at", i, j)
 				result += nbFullPath
 
 				// end of 0 cell
@@ -107,11 +107,48 @@ func (d *D) Run2() int {
 	fileScanner := bufio.NewScanner(d.inputStream)
 	fileScanner.Split(bufio.ScanLines)
 
-	for fileScanner.Scan() {
-		// input = fileScanner.Text()
-	}
+	matrix := getMatrix(fileScanner)
 
 	result := 0
+
+	for i, row := range matrix {
+		for j, col := range row {
+			if col == 0 {
+				// begin of 0 cell
+
+				nbFullPath := 0
+
+				currentPoint := Point{x: i, y: j}
+				queue := []Node{{
+					point:    currentPoint,
+					distance: 0,
+				}}
+
+				for len(queue) > 0 {
+					currentNode := queue[0]
+					queue = queue[1:]
+
+					currentAltitude := matrix[currentNode.point.x][currentNode.point.y]
+
+					if currentNode.distance == 9 {
+						nbFullPath++
+						// break
+					}
+
+					for _, next := range d.GetNextPositions(matrix, currentNode) {
+						if isValid2(matrix, next.point, currentAltitude) {
+							queue = append(queue, next)
+						}
+					}
+
+				}
+
+				result += nbFullPath
+
+				// end of 0 cell
+			}
+		}
+	}
 
 	return result
 }
@@ -159,6 +196,20 @@ func isValid(mat [][]int, visited map[Point]bool, pos Point, currentAltitude int
 	}
 
 	if visited[pos] {
+		return false
+	}
+
+	altitude := mat[pos.x][pos.y]
+
+	return altitude == currentAltitude+1
+}
+
+func isValid2(mat [][]int, pos Point, currentAltitude int) bool {
+	if pos.x < 0 || pos.x >= len(mat[0]) {
+		return false
+	}
+
+	if pos.y < 0 || pos.y >= len(mat) {
 		return false
 	}
 
