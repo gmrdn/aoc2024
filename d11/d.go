@@ -30,8 +30,6 @@ func (d *D) Run1() int {
 		input += line
 	}
 
-	fmt.Println(input)
-
 	currentStoneRow := strings.Split(input, " ")
 	nextStoneRow := []string{}
 
@@ -71,7 +69,63 @@ func (d *D) Run1() int {
 }
 
 func (d *D) Run2() int {
-	return 0
+	fileScanner := bufio.NewScanner(d.inputStream)
+	fileScanner.Split(bufio.ScanLines)
+
+	input := ""
+	for fileScanner.Scan() {
+		line := fileScanner.Text()
+		input += line
+	}
+
+	currentStoneRow := strings.Split(input, " ")
+
+	maxBlinks := 75
+	currentOccurrences := make(map[string]int)
+
+	for _, stone := range currentStoneRow {
+		currentOccurrences[stone]++
+	}
+
+	nextOccurrences := make(map[string]int)
+
+	for i := 0; i < maxBlinks; i++ {
+
+		// fmt.Println(currentOccurrences)
+
+		for stone, occ := range currentOccurrences {
+
+			if stone == "0" {
+				nextOccurrences["1"] += occ
+				continue
+			}
+			if len(stone)%2 == 0 {
+				stoneRunes := []rune(stone)
+				left := string(stoneRunes[:len(stone)/2])
+				right := string(stoneRunes[len(stone)/2:])
+				rightAsInt, _ := strconv.Atoi(right)
+				right = fmt.Sprintf("%d", rightAsInt)
+
+				nextOccurrences[left] += occ
+				nextOccurrences[right] += occ
+			} else {
+				stoneInt, _ := strconv.Atoi(stone)
+				nextOccurrences[fmt.Sprintf("%d", stoneInt*2024)] += occ
+			}
+
+		}
+
+		currentOccurrences = nextOccurrences
+		nextOccurrences = make(map[string]int)
+		// fmt.Println("after calc", "current", currentOccurrences, "next", nextOccurrences)
+	}
+
+	result := 0
+	for _, occ := range currentOccurrences {
+		result += occ
+	}
+
+	return result
 }
 
 func (d *D) RunStr1() string {
